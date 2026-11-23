@@ -18,7 +18,6 @@ public partial class Form1 : Form
         InitializeComponent(); BuildInterface();
         _client.MessageReceived += message => Ui(() => AddMessage(message));
         _client.ConnectionChanged += (ok, text) => Ui(() => SetConnection(ok, text));
-        _server.MessageReceived += message => Ui(() => AddMessage(message));
         _server.ClientsChanged += clients => Ui(() => UpdateClients(clients));
         FormClosing += async (_, _) => { _closing = true; await _client.DisposeAsync(); await _server.DisposeAsync(); };
     }
@@ -30,15 +29,13 @@ public partial class Form1 : Form
         root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 290)); root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100)); Controls.Add(root);
         var side = new Panel { Dock = DockStyle.Fill, BackColor = Color.FromArgb(31, 58, 67), Padding = new Padding(20) }; root.Controls.Add(side, 0, 0);
         var sideLayout = new TableLayoutPanel { Dock = DockStyle.Fill, RowCount = 9, ColumnCount = 1, BackColor = Color.Transparent };
-        sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 86)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 35)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 45)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 35)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 45)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 35)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 35)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100)); side.Controls.Add(sideLayout);
+        sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 86)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 35)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 45)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 35)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 45)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 35)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48)); sideLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100)); side.Controls.Add(sideLayout);
         var title = new Label { Text = "KIYI\nSOHBETİ", Font = new Font("Segoe UI", 19, FontStyle.Bold), ForeColor = Color.FromArgb(227, 244, 234), Dock = DockStyle.Fill };
         sideLayout.Controls.Add(title, 0, 0);
         sideLayout.Controls.Add(Label("SUNUCU ADRESİ"), 0, 1); _host = Input("127.0.0.1"); sideLayout.Controls.Add(_host, 0, 2);
         sideLayout.Controls.Add(Label("BAĞLANTI NOKTASI"), 0, 3); _port = Input("5055"); sideLayout.Controls.Add(_port, 0, 4);
-        sideLayout.Controls.Add(Label("KULLANICI ADI"), 0, 5); _name = Input(Environment.UserName); sideLayout.Controls.Add(_name, 0, 6);
-        var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, WrapContents = false, Padding = new Padding(0, 5, 0, 0) };
-        var startServer = SideButton("SUNUCUYU AÇ"); startServer.Click += async (_, _) => await StartServerAsync();
-        buttons.Controls.Add(startServer); sideLayout.Controls.Add(buttons, 0, 7);
+        sideLayout.Controls.Add(Label("KULLANICI ADI"), 0, 5); _name = Input("Deniz"); sideLayout.Controls.Add(_name, 0, 6);
+        var startServer = SideButton("SUNUCUYU AÇ"); startServer.Click += async (_, _) => await StartServerAsync(); sideLayout.Controls.Add(startServer, 0, 7);
         var clientGroup = new Panel { Dock = DockStyle.Fill };
         _serverState = new Label { Text = "● Sunucu kapalı", ForeColor = Color.FromArgb(174, 196, 198), Font = new Font("Segoe UI", 9, FontStyle.Bold), Dock = DockStyle.Top, Height = 30 };
         var listTitle = new Label { Text = "BAĞLI İSTEMCİLER", ForeColor = Color.FromArgb(174, 196, 198), Font = new Font("Segoe UI", 8, FontStyle.Bold), Dock = DockStyle.Top, Height = 28 };

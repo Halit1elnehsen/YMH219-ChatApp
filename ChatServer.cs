@@ -80,7 +80,12 @@ public sealed class ChatServer : IAsyncDisposable
         var json = JsonSerializer.Serialize(message);
         foreach (var client in _clients.Values)
         {
-            try { if (client.Writer is not null) await client.Writer.WriteLineAsync(json.AsMemory(), token); }
+            try
+            {
+                await client.WriteLock.WaitAsync(token);
+                try { if (client.Writer is not null) await client.Writer.WriteLineAsync(json.AsMemory(), token); }
+                finally { client.WriteLock.Release(); }
+            }
             catch (IOException) { }
             catch (ObjectDisposedException) { }
         }
@@ -102,5 +107,6 @@ public sealed class ChatServer : IAsyncDisposable
         public TcpClient Client { get; } = client;
         public string User { get; set; } = "";
         public StreamWriter? Writer { get; set; }
+        public SemaphoreSlim WriteLock { get; } = new(1, 1);
     }
 }
